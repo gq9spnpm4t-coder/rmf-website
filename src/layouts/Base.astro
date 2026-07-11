@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { site } from '../data/site';
 
 interface Props {
   title?: string;
@@ -10,6 +11,36 @@ const {
   title = 'Ridenour Media Firm | Tulsa Video & Photo Production',
   description = "Tulsa-based video and photo production. Sports, events, promo video, product photography, and more, handled start to finish by Junuh Ridenour.",
 } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://ridenourmediafirm.com').href;
+
+// Local-business structured data so Google can show RMF in local results
+// with the right name, area, services, and social links.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://ridenourmediafirm.com/#business',
+  name: site.name,
+  description,
+  url: 'https://ridenourmediafirm.com',
+  email: site.email,
+  image: 'https://ridenourmediafirm.com/logo-black.png',
+  areaServed: { '@type': 'City', name: 'Tulsa', address: { '@type': 'PostalAddress', addressRegion: 'OK', addressCountry: 'US' } },
+  address: { '@type': 'PostalAddress', addressLocality: 'Tulsa', addressRegion: 'OK', addressCountry: 'US' },
+  founder: { '@type': 'Person', name: 'Junuh Ridenour' },
+  sameAs: [site.youtube.url, site.instagram.url],
+  knowsAbout: [
+    'Sports videography',
+    'Promotional video',
+    'Product photography',
+    'Real estate photography',
+    'Event coverage',
+    'Highlight reels',
+    'Senior photos',
+    'Professional headshots',
+    'Video editing',
+  ],
+};
 ---
 
 <!doctype html>
@@ -19,11 +50,18 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" href="/or-mark.png" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/logo-black.png" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://ridenourmediafirm.com/logo-black.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://ridenourmediafirm.com/logo-black.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
     <slot />
