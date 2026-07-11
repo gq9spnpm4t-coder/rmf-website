@@ -2,6 +2,10 @@
 import { inquiryNeeds } from '../data/services';
 
 const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
+
+// Turnstile (free spam protection) activates only when the public site key is
+// present as a build env var. Without it, the form works exactly as before.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <section id="contact" class="bg-white">
@@ -110,6 +114,12 @@ const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
         <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
       </div>
 
+      {
+        turnstileSiteKey && (
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" />
+        )
+      }
+
       <div>
         <button
           type="submit"
@@ -123,6 +133,17 @@ const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
     </form>
   </div>
 </section>
+
+{
+  turnstileSiteKey && (
+    <script
+      is:inline
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    />
+  )
+}
 
 <script>
   const form = document.getElementById('inquiry-form') as HTMLFormElement | null;
@@ -303,6 +324,7 @@ const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
       reachDetail: data.get('reachDetail'),
       details: data.get('details'),
       company: data.get('company'),
+      turnstileToken: data.get('cf-turnstile-response'),
     };
 
     const button = form.querySelector('button[type=submit]') as HTMLButtonElement;
@@ -325,6 +347,8 @@ const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
         true
       );
       button.disabled = false;
+      // Turnstile tokens are single-use; get a fresh one for the retry
+      (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
     }
   });
 </script>

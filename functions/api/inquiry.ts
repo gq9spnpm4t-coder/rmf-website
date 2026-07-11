@@ -14,6 +14,8 @@ interface Env {
   TWILIO_AUTH_TOKEN?: string;
   TWILIO_FROM?: string;
   TWILIO_TO?: string;
+  // Cloudflare Turnstile spam protection; activates when the secret is set
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 interface InquiryPayload {
@@ -25,6 +27,7 @@ interface InquiryPayload {
   reachDetail?: string;
   details?: string;
   company?: string; // honeypot
+  turnstileToken?: string;
 }
 
 const json = (body: unknown, status = 200) =>
@@ -46,6 +49,27 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   // Honeypot filled = bot. Pretend success so bots learn nothing.
   if (clean(payload.company)) return json({ ok: true });
+
+  // Turnstile check (only when the secret is configured). Verifies the visitor
+  // token with Cloudflare; a failed or missing token is rejected as a bot.
+  if (env.TURNSTILE_SECRET_KEY) {
+    const token = clean(payload.turnstileToken, 4000);
+    if (!token) return json({ error: 'Failed verification' }, 403);
+    const verify = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          secret: env.TURNSTILE_SECRET_KEY,
+          response: token,
+          remoteip: request.headers.get('CF-Connecting-IP') ?? '',
+        }),
+      }
+    );
+    const outcome = (await verify.json()) as { success?: boolean };
+    if (!outcome.success) return json({ error: 'Failed verification' }, 403);
+  }
 
   const name = clean(payload.name, 200);
   const planning = clean(payload.planning, 500);
