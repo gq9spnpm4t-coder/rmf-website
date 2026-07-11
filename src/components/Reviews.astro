@@ -1,0 +1,100 @@
+---
+// Google reviews, fetched client-side from /api/reviews (a Cloudflare Pages
+// Function that keeps the API key server-side and caches results daily).
+// Until the Places API key + Place ID exist, the function returns sample data
+// flagged sample:true and this section shows a small setup note.
+---
+
+<section id="reviews" class="glow-host overflow-hidden bg-ink text-paper">
+  <div class="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <h2 class="display reveal text-4xl md:text-5xl">What people say</h2>
+    <p id="reviews-note" class="reveal mt-4 hidden text-sm text-paper/50">
+      Sample reviews shown while the Google connection is being set up.
+    </p>
+
+    <div id="reviews-grid" class="reveal mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <p class="text-paper/50">Loading reviews…</p>
+    </div>
+
+    <p class="reveal mt-8 text-xs text-paper/40">Reviews from Google</p>
+  </div>
+</section>
+
+<script>
+  type Review = {
+    author: string;
+    rating: number;
+    text: string;
+    relativeTime: string;
+  };
+
+  const FALLBACK: { sample: boolean; reviews: Review[] } = {
+    sample: true,
+    reviews: [
+      {
+        author: 'Sample Client',
+        rating: 5,
+        text: 'Placeholder review. Real Google reviews appear here once the Places API key and Place ID are connected.',
+        relativeTime: 'recently',
+      },
+      {
+        author: 'Sample Client',
+        rating: 5,
+        text: 'Placeholder review card showing how a longer review lays out across a few lines, so the design can be judged with realistic content.',
+        relativeTime: 'a month ago',
+      },
+      {
+        author: 'Sample Client',
+        rating: 5,
+        text: 'A third placeholder card to fill out the grid.',
+        relativeTime: 'two months ago',
+      },
+    ],
+  };
+
+  function starsInto(el: HTMLElement, rating: number, cardIndex: number) {
+    const full = Math.round(rating);
+    for (let i = 0; i < 5; i++) {
+      const star = document.createElement('span');
+      star.textContent = i < full ? '★' : '☆';
+      if (i < full) {
+        star.className = 'star-twinkle';
+        star.style.animationDelay = `${cardIndex * 1.2 + i * 0.12}s`;
+      }
+      el.append(star);
+    }
+  }
+
+  function render(data: { sample?: boolean; reviews: Review[] }) {
+    const grid = document.getElementById('reviews-grid');
+    const note = document.getElementById('reviews-note');
+    if (!grid) return;
+    if (data.sample && note) note.classList.remove('hidden');
+    grid.innerHTML = '';
+    let index = 0;
+    for (const review of data.reviews.slice(0, 6)) {
+      const card = document.createElement('article');
+      card.className =
+        'rounded-lg border border-paper/15 bg-ink-soft/40 p-6 flex flex-col gap-3 glint';
+      card.style.setProperty('--glint', 'rgba(250, 248, 245, 0.07)');
+      card.style.setProperty('--glint-delay', `${4 + index * 2.3}s`);
+      const starsEl = document.createElement('p');
+      starsEl.className = 'text-accent tracking-[0.2em]';
+      starsEl.setAttribute('aria-label', `${review.rating} out of 5 stars`);
+      starsInto(starsEl, review.rating, index++);
+      const textEl = document.createElement('p');
+      textEl.className = 'leading-relaxed text-paper/85 grow';
+      textEl.textContent = review.text;
+      const byEl = document.createElement('p');
+      byEl.className = 'text-sm text-paper/50';
+      byEl.textContent = `${review.author} · ${review.relativeTime}`;
+      card.append(starsEl, textEl, byEl);
+      grid.append(card);
+    }
+  }
+
+  fetch('/api/reviews')
+    .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+    .then(render)
+    .catch(() => render(FALLBACK));
+</script>

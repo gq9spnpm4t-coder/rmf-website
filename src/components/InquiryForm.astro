@@ -1,0 +1,330 @@
+---
+import { inquiryNeeds } from '../data/services';
+
+const reachOptions = ['Email', 'Text', 'Call', 'WhatsApp', 'Other'];
+---
+
+<section id="contact" class="bg-white">
+  <div class="mx-auto max-w-3xl px-5 py-20 md:px-8 md:py-28">
+    <h2 class="display reveal text-4xl md:text-5xl">Let's work together</h2>
+    <p class="reveal mt-5 text-lg leading-relaxed text-ink-soft">
+      Tell me what you're working on. The more I know about your event, your brand, or your idea,
+      the better I can help, so don't be shy with the details.
+    </p>
+
+    <form id="inquiry-form" class="reveal mt-12 space-y-9" novalidate>
+      <div>
+        <label for="name" class="eyebrow block text-ink">Your name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors focus:border-accent"
+        />
+      </div>
+
+      <div>
+        <label for="planning" class="eyebrow block text-ink">What are you planning?</label>
+        <input
+          id="planning"
+          name="planning"
+          type="text"
+          required
+          placeholder="Short description"
+          class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors placeholder:text-ink/30 focus:border-accent"
+        />
+      </div>
+
+      <fieldset>
+        <legend class="eyebrow text-ink">What do you need?</legend>
+        <div class="mt-4 flex flex-wrap gap-2.5">
+          {
+            inquiryNeeds.map((need) => (
+              <label class="cursor-pointer">
+                <input type="checkbox" name="needs" value={need} class="peer sr-only" />
+                <span class="inline-block rounded-full border border-ink/25 px-4 py-2 text-sm transition-colors peer-checked:border-accent peer-checked:bg-accent peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent/50">
+                  {need}
+                </span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div>
+        <label id="timeline-label" for="timeline" class="eyebrow block text-ink">
+          When is it / what's your timeline?
+        </label>
+        <input
+          id="timeline"
+          name="timeline"
+          type="text"
+          class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors focus:border-accent"
+        />
+      </div>
+
+      <div class="grid gap-9 sm:grid-cols-[200px_1fr] sm:gap-6">
+        <div>
+          <label for="reach-method" class="eyebrow block text-ink">Best way to reach you</label>
+          <select
+            id="reach-method"
+            name="reachMethod"
+            class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors focus:border-accent"
+          >
+            {reachOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </div>
+        <div>
+          <label id="reach-detail-label" for="reach-detail" class="eyebrow block text-ink">
+            Where do I reach you?
+          </label>
+          <input
+            id="reach-detail"
+            name="reachDetail"
+            type="text"
+            required
+            placeholder="Email address or phone number"
+            class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors placeholder:text-ink/30 focus:border-accent"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label id="details-label" for="details" class="eyebrow block text-ink">
+          Anything else I should know?
+        </label>
+        <textarea
+          id="details"
+          name="details"
+          rows="4"
+          placeholder="Details"
+          class="mt-3 w-full border-b-2 border-ink/20 bg-transparent pb-2 text-lg outline-none transition-colors placeholder:text-ink/30 focus:border-accent"
+        ></textarea>
+      </div>
+
+      <!-- Honeypot: humans never see or fill this -->
+      <div class="absolute -left-[9999px]" aria-hidden="true">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          class="glint rounded-md bg-accent px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-white uppercase transition hover:-translate-y-0.5 hover:bg-accent-dark disabled:opacity-50"
+          style="--glint: rgba(255, 255, 255, 0.25); --glint-delay: 6s"
+        >
+          Send it over
+        </button>
+        <p id="form-status" class="mt-4 hidden text-ink-soft" role="status"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('inquiry-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+  const nameInput = document.getElementById('name') as HTMLInputElement | null;
+  const planningInput = document.getElementById('planning') as HTMLInputElement | null;
+  const timelineLabel = document.getElementById('timeline-label');
+  const reachSelect = document.getElementById('reach-method') as HTMLSelectElement | null;
+  const reachLabel = document.getElementById('reach-detail-label');
+  const reachInput = document.getElementById('reach-detail') as HTMLInputElement | null;
+  const detailsLabel = document.getElementById('details-label');
+
+  // The form pays attention: labels rephrase themselves around what the
+  // visitor has typed and picked. All variants are pre-written strings.
+
+  const TIMELINE_DEFAULT = "When is it / what's your timeline?";
+  const TIMELINE_BY_NEED: Record<string, string> = {
+    Sports: "When's the game?",
+    'Event coverage': "When's the event?",
+    'Highlight reel': 'When do you need it by?',
+    'Senior photos': 'When do you want to shoot?',
+    Headshots: 'When do you want to shoot?',
+    'Real estate': 'When does it need to hit the market?',
+    'Promo video': 'When do you need it by?',
+    'Product photography': 'When do you need it by?',
+    'Product documentation': 'When do you need it by?',
+    'Website photo & video': 'When do you need it by?',
+    'Video editing': 'When do you need the final cut?',
+  };
+
+  const REACH: Record<string, [string, string]> = {
+    Email: ["What's your email?", 'you@example.com'],
+    Text: ['What number should I text?', '(918) 555-0123'],
+    Call: ["What's your number, and when's a good time to call?", '(918) 555-0123, weekday afternoons'],
+    WhatsApp: ["What's your WhatsApp?", 'Number or username'],
+    Other: ['Where do I reach you?', 'Wherever works best'],
+  };
+
+  // Keyword sniffing on "What are you planning?" — first match wins
+  const TOPIC_PATTERNS: Array<[RegExp, string]> = [
+    [/wedding|engagement|proposal/i, 'the big day'],
+    [/game|team|season|tournament|playoff|match(?!\w)/i, 'the game'],
+    [/senior|graduat/i, 'senior year'],
+    [/house|home|listing|property|real ?estate|apartment|realtor/i, 'the property'],
+    [/product|launch/i, 'the product'],
+    [/event|festival|fair|conference|concert|gala|fundraiser|show/i, 'the event'],
+    [/business|brand|company|shop|store|restaurant|studio|gym/i, 'your business'],
+  ];
+
+  // Fallback topics when the description has no keywords yet
+  const TOPIC_BY_NEED: Record<string, string> = {
+    Sports: 'the game',
+    'Event coverage': 'the event',
+    'Real estate': 'the property',
+    'Senior photos': 'senior year',
+    'Product photography': 'the product',
+    'Product documentation': 'the product',
+    'Promo video': 'your business',
+    'Website photo & video': 'your business',
+  };
+
+  let selectedNeeds: string[] = []; // click order, newest last
+
+  function firstName(): string {
+    const raw = nameInput?.value.trim() ?? '';
+    if (!raw) return '';
+    const first = raw.split(/\s+/)[0];
+    return first.charAt(0).toUpperCase() + first.slice(1);
+  }
+
+  function swap(el: Element | null, text: string) {
+    if (!el || el.textContent?.trim() === text) return;
+    el.textContent = text;
+    el.classList.remove('label-swap');
+    void (el as HTMLElement).offsetWidth; // restart the animation
+    el.classList.add('label-swap');
+  }
+
+  function updateTimeline() {
+    let text = TIMELINE_DEFAULT;
+    for (let i = selectedNeeds.length - 1; i >= 0; i--) {
+      const variant = TIMELINE_BY_NEED[selectedNeeds[i]];
+      if (variant) {
+        text = variant;
+        break;
+      }
+    }
+    swap(timelineLabel, text);
+  }
+
+  function updateReach() {
+    const [label, placeholder] = REACH[reachSelect?.value ?? ''] ?? REACH.Other;
+    swap(reachLabel, label);
+    if (reachInput) reachInput.placeholder = placeholder;
+  }
+
+  function updateDetails() {
+    let topic = '';
+    const planning = planningInput?.value ?? '';
+    for (const [pattern, match] of TOPIC_PATTERNS) {
+      if (pattern.test(planning)) {
+        topic = match;
+        break;
+      }
+    }
+    if (!topic) {
+      for (let i = selectedNeeds.length - 1; i >= 0; i--) {
+        if (TOPIC_BY_NEED[selectedNeeds[i]]) {
+          topic = TOPIC_BY_NEED[selectedNeeds[i]];
+          break;
+        }
+      }
+    }
+    const name = firstName();
+    const about = topic ? ` about ${topic}` : '';
+    const who = name ? `, ${name}` : '';
+    swap(detailsLabel, `Anything else I should know${about}${who}?`);
+  }
+
+  form?.querySelectorAll<HTMLInputElement>('input[name=needs]').forEach((box) =>
+    box.addEventListener('change', () => {
+      selectedNeeds = selectedNeeds.filter((need) => need !== box.value);
+      if (box.checked) selectedNeeds.push(box.value);
+      updateTimeline();
+      updateDetails();
+    })
+  );
+
+  reachSelect?.addEventListener('change', updateReach);
+
+  // A service card was clicked: preselect its need (if not already on) and
+  // give it a brief highlight so the visitor sees what carried over.
+  window.addEventListener('rmf:select-need', (event) => {
+    const need = (event as CustomEvent<string>).detail;
+    const box = form?.querySelector<HTMLInputElement>(
+      `input[name=needs][value="${CSS.escape(need)}"]`
+    );
+    if (!box) return;
+    if (!box.checked) {
+      box.checked = true;
+      box.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const pill = box.nextElementSibling;
+    if (pill) {
+      pill.classList.add('label-swap');
+      pill.addEventListener('animationend', () => pill.classList.remove('label-swap'), {
+        once: true,
+      });
+    }
+  });
+
+  let debounce: ReturnType<typeof setTimeout> | undefined;
+  const queueDetails = () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(updateDetails, 350);
+  };
+  nameInput?.addEventListener('input', queueDetails);
+  planningInput?.addEventListener('input', queueDetails);
+
+  function show(message: string, isError = false) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.remove('hidden');
+    status.classList.toggle('text-accent-dark', isError);
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const data = new FormData(form);
+    const payload = {
+      name: data.get('name'),
+      planning: data.get('planning'),
+      needs: data.getAll('needs'),
+      timeline: data.get('timeline'),
+      reachMethod: data.get('reachMethod'),
+      reachDetail: data.get('reachDetail'),
+      details: data.get('details'),
+      company: data.get('company'),
+    };
+
+    const button = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    button.disabled = true;
+    show('Sending…');
+
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      const name = firstName();
+      form.reset();
+      show(`Sent${name ? ', ' + name : ''}. Thanks for the details, I'll get back to you soon.`);
+    } catch {
+      show(
+        'Something went wrong sending that. Email me directly at junuhridenour0@gmail.com and we can go from there.',
+        true
+      );
+      button.disabled = false;
+    }
+  });
+</script>

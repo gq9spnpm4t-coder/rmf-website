@@ -1,0 +1,65 @@
+---
+import { clients } from '../data/clients';
+
+// While the real client list is empty, show neutral placeholder tiles so the
+// layout is visible during review. Replace or hide before launch.
+const placeholderCount = 8;
+const hasClients = clients.length > 0;
+// Duplicate the row so the marquee loops seamlessly.
+const row = hasClients
+  ? [...clients, ...clients]
+  : Array.from({ length: placeholderCount * 2 });
+---
+
+<section id="clients" class="bg-paper">
+  <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
+    <h2 class="eyebrow reveal text-center text-ink-soft">Proud to have worked with</h2>
+
+    <div class="reveal mt-10 overflow-hidden" aria-label="Client logos">
+      <div class="marquee flex w-max items-center gap-12 md:gap-16">
+        {
+          hasClients
+            ? (row as typeof clients).map((client) => (
+                <span
+                  class={`client-logo ${client.wide ? 'w-44 md:w-52' : 'w-28 md:w-32'} h-12 shrink-0 md:h-14`}
+                  style={`-webkit-mask-image: url('${client.logo}'); mask-image: url('${client.logo}');`}
+                  role="img"
+                  aria-label={client.name}
+                />
+              ))
+            : row.map(() => (
+                <div class="flex h-14 w-40 shrink-0 items-center justify-center rounded-md border border-dashed border-ink/15 bg-white/60">
+                  <span class="font-display text-[10px] font-semibold tracking-[0.2em] text-ink/30 uppercase">
+                    Client logo
+                  </span>
+                </div>
+              ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Each logo is a single-tone mask painted in ink, terracotta on hover.
+     mask-size/position/repeat are shared; the image URL is set inline. */
+  .client-logo {
+    display: inline-block;
+    background-color: var(--color-ink);
+    opacity: 0.55;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    transition:
+      background-color 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .client-logo:hover {
+    background-color: var(--color-accent);
+    opacity: 1;
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+const steps = [
+  {
+    title: 'Tell me about it.',
+    body: "Reach out and tell me what you're planning. Whether it's an event, a business, or a cause you believe in, I actually want to hear about it. I'm curious what you've got going on.",
+  },
+  {
+    title: 'We shape the scope and a budget that fits.',
+    body: "Every project is different, so I don't do one-size-fits-all pricing or hourly rates. You tell me the plan and the budget you're working with, and I'll put together something that makes sense. You'll always know what you're getting and what it costs.",
+  },
+  {
+    title: 'I shoot, edit, and deliver, fast.',
+    body: 'I move quickly. Most people are surprised how soon their final files show up.',
+  },
+];
+---
+
+<section id="how-it-works" class="bg-paper">
+  <div class="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <h2 class="display reveal text-4xl md:text-5xl">How it works</h2>
+
+    <ol class="relative mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+      <!-- Terracotta dashes flow 1 -> 2 -> 3 behind the step numbers -->
+      <svg
+        class="pointer-events-none absolute top-6 right-0 left-0 hidden h-1 w-full md:block"
+        aria-hidden="true"
+        preserveAspectRatio="none"
+      >
+        <line
+          x1="0"
+          y1="2"
+          x2="100%"
+          y2="2"
+          stroke="var(--color-accent)"
+          stroke-opacity="0.35"
+          stroke-width="2"
+          stroke-dasharray="6 12"
+          class="dash-flow"></line>
+      </svg>
+      {
+        steps.map((step, i) => (
+          <li class="reveal">
+            <p
+              class="display step-pulse relative inline-block bg-paper pr-5 text-5xl text-accent"
+              style={`animation-delay: ${i * 2}s`}
+            >
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3 class="mt-4 font-display text-base font-bold tracking-[0.06em] uppercase">
+              Step {i + 1}. {step.title}
+            </h3>
+            <p class="mt-3 leading-relaxed text-ink-soft">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

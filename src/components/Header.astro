@@ -1,0 +1,101 @@
+---
+const links = [
+  { href: '#work', label: 'Work' },
+  { href: '#services', label: 'Services' },
+  { href: '#about', label: 'About' },
+  { href: '#reviews', label: 'Reviews' },
+  { href: '#how-it-works', label: 'How it works' },
+];
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur transition-shadow duration-300"
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 md:px-8">
+    <a href="#top" class="flex items-center gap-3">
+      <img src="/or-mark.png" alt="" class="h-9 w-auto" />
+      <span class="display text-sm leading-tight tracking-[0.08em] sm:text-base">
+        Ridenour<br />Media Firm
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Main">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="font-display text-xs font-semibold tracking-[0.18em] uppercase transition-colors hover:text-accent"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="#contact"
+        class="hidden rounded-md bg-accent px-5 py-2.5 font-display text-xs font-bold tracking-[0.14em] text-white uppercase transition-colors hover:bg-accent-dark sm:inline-block"
+      >
+        Start a project
+      </a>
+      <button
+        id="menu-toggle"
+        class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="h-0.5 w-6 bg-ink transition-transform"></span>
+        <span class="h-0.5 w-6 bg-ink transition-opacity"></span>
+        <span class="h-0.5 w-6 bg-ink transition-transform"></span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden border-t border-ink/10 bg-paper lg:hidden" aria-label="Mobile">
+    <div class="mx-auto flex max-w-6xl flex-col px-5 py-4">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="menu-link py-3 font-display text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href="#contact"
+        class="menu-link mt-2 rounded-md bg-accent px-5 py-3 text-center font-display text-sm font-bold tracking-[0.14em] text-white uppercase"
+      >
+        Start a project
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Soft shadow appears once the page starts moving under the header
+  const header = document.getElementById('site-header');
+  addEventListener(
+    'scroll',
+    () => header?.classList.toggle('shadow-md', window.scrollY > 8),
+    { passive: true }
+  );
+
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const close = () => {
+      menu.classList.add('hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('hidden') === false;
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    menu.querySelectorAll('.menu-link').forEach((link) => link.addEventListener('click', close));
+  }
+</script>

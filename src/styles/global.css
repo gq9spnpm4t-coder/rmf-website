@@ -1,0 +1,585 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/montserrat';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --color-ink: #121110;
+  --color-ink-soft: #2a2825;
+  --color-paper: #faf8f5;
+  --color-accent: #c4582e;
+  --color-accent-dark: #a3461f;
+
+  --font-display: 'Montserrat Variable', 'Montserrat', ui-sans-serif, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', ui-sans-serif, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Anchored sections stop below the sticky header */
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Display headings echo the wordmark: bold, uppercase, tracked out */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.8rem;
+}
+
+/* Focus tracer under section headings: a terracotta segment glides along a
+   faint track, overshoots a hair, locks on like a lens finding focus, rests,
+   then drifts home. */
+h2.display.reveal {
+  width: fit-content;
+}
+
+h2.display.reveal::after {
+  content: '';
+  display: block;
+  margin-top: 0.85rem;
+  height: 4px;
+  width: 100%;
+  min-width: 3.5rem;
+  border-radius: 9999px;
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-size: 3.5rem 100%;
+  background-repeat: no-repeat;
+  background-position-x: 0%;
+  opacity: 0;
+  transition: opacity 0.7s ease 0.3s;
+  animation: focus-trace 9s ease-in-out infinite;
+}
+
+h2.display.reveal.revealed::after {
+  opacity: 1;
+}
+
+@keyframes focus-trace {
+  0%,
+  14% {
+    background-position-x: 0%;
+  }
+  34% {
+    background-position-x: 100%;
+  }
+  37% {
+    background-position-x: 97%;
+  }
+  40%,
+  60% {
+    background-position-x: 100%;
+  }
+  82%,
+  100% {
+    background-position-x: 0%;
+  }
+}
+
+/* Viewfinder brackets snap onto a key word, hold focus, release */
+.focus-frame {
+  position: relative;
+  display: inline-block;
+}
+
+.focus-frame::before,
+.focus-frame::after {
+  content: '';
+  position: absolute;
+  width: 0.32em;
+  height: 0.32em;
+  border: 3px solid var(--color-accent);
+  opacity: 0;
+  animation: frame-lock 10s ease-in-out infinite;
+}
+
+.focus-frame::before {
+  top: -0.14em;
+  left: -0.18em;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.focus-frame::after {
+  bottom: -0.05em;
+  right: -0.14em;
+  border-left: 0;
+  border-top: 0;
+  animation-delay: 0.12s;
+}
+
+@keyframes frame-lock {
+  0%,
+  52%,
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  58%,
+  86% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  93% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Camera-style corner brackets on the portfolio frame */
+.vf-corner {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0 solid rgba(250, 248, 245, 0.45);
+  animation: vf-pulse 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.vf-tl {
+  top: 0.75rem;
+  left: 0.75rem;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.vf-tr {
+  top: 0.75rem;
+  right: 0.75rem;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+.vf-bl {
+  bottom: 0.75rem;
+  left: 0.75rem;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+
+.vf-br {
+  right: 0.75rem;
+  bottom: 0.75rem;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+
+@keyframes vf-pulse {
+  0%,
+  68%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  76% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  84% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
+
+/* A faint scanline drifts down the reel frame now and then */
+.scanline {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  top: 4%;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(250, 248, 245, 0.55), transparent);
+  animation: scanline 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0%,
+  76% {
+    top: 4%;
+    opacity: 0;
+  }
+  79% {
+    opacity: 0.5;
+  }
+  97%,
+  100% {
+    top: 93%;
+    opacity: 0;
+  }
+}
+
+/* A warm glint sweeps across one card at a time */
+.glint {
+  position: relative;
+  overflow: hidden;
+}
+
+.glint::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    var(--glint, color-mix(in srgb, var(--color-accent) 13%, transparent)),
+    transparent
+  );
+  transform: skewX(-12deg);
+  animation: glint-sweep 22s linear infinite;
+  animation-delay: var(--glint-delay, 0s);
+  pointer-events: none;
+}
+
+@keyframes glint-sweep {
+  0% {
+    transform: translateX(0) skewX(-12deg);
+  }
+  5%,
+  100% {
+    transform: translateX(360%) skewX(-12deg);
+  }
+}
+
+/* Marker-style highlight sweeps under a key phrase, holds, lets go */
+.highlight-sweep {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-accent) 28%, transparent),
+    color-mix(in srgb, var(--color-accent) 28%, transparent)
+  );
+  background-repeat: no-repeat;
+  background-size: 0% 40%;
+  background-position: 0 82%;
+  animation: hl-sweep 12s ease-in-out infinite;
+}
+
+@keyframes hl-sweep {
+  0%,
+  22% {
+    background-size: 0% 40%;
+  }
+  36%,
+  72% {
+    background-size: 100% 40%;
+  }
+  88%,
+  100% {
+    background-size: 0% 40%;
+  }
+}
+
+/* Stars twinkle one after another */
+.star-twinkle {
+  display: inline-block;
+  animation: star-twinkle 6s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%,
+  86%,
+  100% {
+    transform: scale(1);
+  }
+  91% {
+    transform: scale(1.35);
+  }
+  96% {
+    transform: scale(1);
+  }
+}
+
+/* Terracotta dashes flow steadily along the how-it-works line */
+.dash-flow {
+  animation: dash-flow 1.4s linear infinite;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+/* Portfolio cards: reveal like everything else, lift softly on hover */
+.card-lift {
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(18, 17, 16, 0.08);
+}
+
+/* The aperture mark in the reel placeholder breathes slowly */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.55;
+  }
+}
+
+.breathe {
+  opacity: 0.45;
+  animation: breathe 5s ease-in-out infinite;
+}
+
+/* Ambient motion: each section carries one slow, continuous movement.
+   Everything animates transform/opacity only, so it stays cheap. */
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 90s linear infinite;
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dot-pulse {
+  animation: dot-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes bar-breathe {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(1.7);
+    opacity: 0.75;
+  }
+}
+
+.bar-breathe {
+  transform-origin: left center;
+  animation: bar-breathe 5s ease-in-out infinite;
+}
+
+/* A pulse that travels 1 -> 2 -> 3 via staggered delays */
+@keyframes step-pulse {
+  0%,
+  55%,
+  100% {
+    opacity: 0.4;
+  }
+  15% {
+    opacity: 1;
+  }
+}
+
+.step-pulse {
+  animation: step-pulse 6s ease-in-out infinite;
+}
+
+@keyframes star-shimmer {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.star-shimmer {
+  animation: star-shimmer 3.5s ease-in-out infinite;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+.float-soft {
+  animation: float-soft 2.4s ease-in-out infinite;
+}
+
+/* Mouse-reactive: service cards tilt toward the cursor in 3D. JS sets
+   --mx/--my in degrees; CSS rests them at 0 when the pointer leaves. */
+.tilt {
+  transform: perspective(700px) rotateX(var(--my, 0deg)) rotateY(var(--mx, 0deg));
+  transition: transform 0.25s ease;
+}
+
+.tilt:hover {
+  transition: transform 0.08s linear;
+}
+
+/* A soft terracotta glow trails the cursor inside dark sections */
+.cursor-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-accent) 26%, transparent),
+    transparent 68%
+  );
+  opacity: 0;
+  /* transform (position) is set directly in JS; keep it identity here */
+  transform: translate3d(-9999px, 0, 0);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+
+.glow-host.glow-active .cursor-glow {
+  opacity: 1;
+}
+
+/* Keep section content above the glow */
+.glow-host > *:not(.cursor-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: none) {
+  .tilt {
+    transform: none;
+  }
+  .cursor-glow {
+    display: none;
+  }
+}
+
+/* Form labels fade up when their text personalizes */
+@keyframes label-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+.label-swap {
+  animation: label-in 0.35s ease;
+}
+
+/* Scroll reveal: subtle fade + rise, disabled for reduced motion */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Gentle auto-scroll for the client logo strip */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  animation: marquee 36s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee,
+  .breathe,
+  .label-swap,
+  .spin-slow,
+  .dot-pulse,
+  .bar-breathe,
+  .step-pulse,
+  .star-shimmer,
+  .float-soft,
+  .focus-frame::before,
+  .focus-frame::after,
+  .vf-corner,
+  .scanline,
+  .glint::after,
+  .highlight-sweep,
+  .star-twinkle,
+  .dash-flow {
+    animation: none;
+  }
+  h2.display.reveal::after {
+    animation: none;
+    opacity: 1;
+    transition: none;
+  }
+  .card-lift:hover {
+    transform: none;
+  }
+  .tilt {
+    transform: none !important;
+  }
+  .cursor-glow {
+    display: none;
+  }
+}

@@ -1,0 +1,89 @@
+---
+import { work } from '../data/work';
+
+const [anchor, ...rest] = work;
+---
+
+<section id="work" class="glow-host overflow-hidden bg-ink text-paper">
+  <div class="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <h2 class="display reveal text-4xl md:text-5xl">Recent work</h2>
+    <p class="reveal mt-5 max-w-2xl text-lg leading-relaxed text-paper/70">
+      A mix of sports, community events, product, and brand work. Different subjects, same eye for
+      detail.
+    </p>
+
+    {
+      anchor && (
+        <div class="reveal mt-12">
+          <div data-parallax="-0.03" class="relative">
+            {anchor.src ? (
+              <video
+                class="aspect-video w-full rounded-lg object-cover"
+                src={anchor.src}
+                poster={anchor.poster}
+                controls
+                preload="metadata"
+              />
+            ) : (
+              <div class="relative flex aspect-video w-full flex-col items-center justify-center gap-5 overflow-hidden rounded-lg border border-paper/15 bg-ink-soft/40">
+                <img src="/or-mark-white.png" alt="" class="breathe h-16 w-auto md:h-24" />
+                <p class="flex items-center gap-2.5 font-display text-xs font-semibold tracking-[0.28em] text-paper/50 uppercase">
+                  <span class="dot-pulse h-2 w-2 rounded-full bg-accent"></span>
+                  Highlight reel coming soon
+                </p>
+                <span class="scanline" aria-hidden="true"></span>
+              </div>
+            )}
+            <span class="vf-corner vf-tl" aria-hidden="true"></span>
+            <span class="vf-corner vf-tr" aria-hidden="true"></span>
+            <span class="vf-corner vf-bl" aria-hidden="true"></span>
+            <span class="vf-corner vf-br" aria-hidden="true"></span>
+          </div>
+          <div class="mt-4 flex items-baseline justify-between gap-4">
+            <h3 class="font-display text-lg font-bold tracking-[0.06em] uppercase">
+              {anchor.title}
+            </h3>
+            <p class="text-sm text-paper/60">{anchor.category}</p>
+          </div>
+        </div>
+      )
+    }
+
+    {
+      rest.length > 0 && (
+        <div class="mt-10 grid gap-8 sm:grid-cols-2">
+          {rest.map((piece) => (
+            <div class="reveal">
+              {piece.kind === 'video' && piece.src ? (
+                <video
+                  class="aspect-video w-full rounded-lg object-cover"
+                  src={piece.src}
+                  poster={piece.poster}
+                  controls
+                  preload="metadata"
+                />
+              ) : piece.src ? (
+                <img
+                  class="aspect-video w-full rounded-lg object-cover"
+                  src={piece.src}
+                  alt={piece.title}
+                  loading="lazy"
+                />
+              ) : (
+                <div class="flex aspect-video w-full items-center justify-center rounded-lg border border-paper/15 bg-ink-soft/40">
+                  <img src="/or-mark-white.png" alt="" class="h-12 w-auto opacity-40" />
+                </div>
+              )}
+              <div class="mt-3 flex items-baseline justify-between gap-4">
+                <h3 class="font-display text-base font-bold tracking-[0.06em] uppercase">
+                  {piece.title}
+                </h3>
+                <p class="text-sm text-paper/60">{piece.category}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,49 @@
+---
+import { site } from '../data/site';
+---
+
+<section id="about" class="bg-white">
+  <div class="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+      <div>
+        <h2 class="display reveal text-4xl md:text-5xl">The person behind the lens</h2>
+        <div class="mt-10 hidden w-fit lg:block" data-scroll-rotate="0.04">
+          <img src="/aperture.png" alt="" class="spin-slow h-32 w-32 opacity-10" />
+        </div>
+      </div>
+      <div class="space-y-6 text-lg leading-relaxed text-ink-soft">
+        <p class="reveal">
+          I started Ridenour Media Firm at sixteen, the summer after I got pulled onto a friend's
+          film set. I came for the acting and stayed for everything happening behind the camera. I
+          was hooked on the technical craft of it, so I taught myself. I bought the camera, the
+          lights, the mics, the gimbal, and spent every hour I could learning how to actually use
+          them.
+        </p>
+        <p class="reveal">
+          The first real job I ever did was the Tulsa Maker's Faire. I reached out, offered to
+          cover it, and showed up ready to work. That one event turned into a real relationship and
+          a lot more work after it.
+        </p>
+        <p class="reveal">
+          The way I like to operate is simple. I want to serve the project, but more than that, I
+          want to understand what you're actually trying to do. When I really get what you're going
+          for, I can help in ways that benefit the whole thing, not just hand you a video or a
+          photo. I run the entire process myself, from planning to shooting to editing to delivery,
+          <span class="highlight-sweep">so you're always talking to the person doing the work.</span>
+        </p>
+        {
+          site.personalSiteUrl && (
+            <p class="reveal">
+              <a
+                href={site.personalSiteUrl}
+                class="font-display text-sm font-bold tracking-[0.14em] text-accent uppercase underline-offset-4 hover:underline"
+              >
+                More about me
+              </a>
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

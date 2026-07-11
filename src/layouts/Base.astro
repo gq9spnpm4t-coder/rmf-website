@@ -1,0 +1,166 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Ridenour Media Firm | Tulsa Video & Photo Production',
+  description = "Tulsa-based video and photo production. Sports, events, promo video, product photography, and more, handled start to finish by Junuh Ridenour.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/or-mark.png" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo-black.png" />
+  </head>
+  <body>
+    <slot />
+    <script>
+      // Subtle scroll reveal. Elements with .reveal fade and rise in once.
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+      // Hidden contexts (prerender, headless crawlers) never fire
+      // IntersectionObserver; show everything so content is never invisible.
+      if (prefersReduced || document.hidden) {
+        targets.forEach((el) => el.classList.add('revealed'));
+      } else {
+        // Siblings cascade in one after another instead of all at once. The
+        // delay is cleared afterwards so hover transitions stay instant.
+        targets.forEach((el) => {
+          const peers = Array.from(el.parentElement?.children ?? []).filter((c) =>
+            c.classList.contains('reveal')
+          );
+          const index = peers.indexOf(el);
+          if (peers.length > 1 && index > 0) {
+            el.style.transitionDelay = `${Math.min(index * 80, 480)}ms`;
+            el.addEventListener(
+              'transitionend',
+              () => {
+                el.style.transitionDelay = '';
+              },
+              { once: true }
+            );
+          }
+        });
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15 }
+        );
+        targets.forEach((el) => io.observe(el));
+      }
+
+      // Scroll-linked motion: [data-scroll-rotate] turns with the page like a
+      // focusing lens; [data-parallax] drifts against the scroll for depth.
+      // Factors are set per element in its data attribute.
+      const rotators = document.querySelectorAll<HTMLElement>('[data-scroll-rotate]');
+      const drifters = document.querySelectorAll<HTMLElement>('[data-parallax]');
+      if (!prefersReduced && (rotators.length || drifters.length)) {
+        let ticking = false;
+        const update = () => {
+          ticking = false;
+          const mid = window.innerHeight / 2;
+          rotators.forEach((el) => {
+            const factor = parseFloat(el.dataset.scrollRotate || '0.05');
+            el.style.transform = `rotate(${window.scrollY * factor}deg)`;
+          });
+          drifters.forEach((el) => {
+            const factor = parseFloat(el.dataset.parallax || '-0.05');
+            // Measure the untransformed parent so the drift never compounds
+            const rect = (el.parentElement ?? el).getBoundingClientRect();
+            const offset = (rect.top + rect.height / 2 - mid) * factor;
+            el.style.transform = `translateY(${offset.toFixed(1)}px)`;
+          });
+        };
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          },
+          { passive: true }
+        );
+        update();
+      }
+
+      // Mouse-reactive layer (skipped for reduced motion and touch devices).
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!prefersReduced && fine) {
+        // 1. Service cards tilt toward the cursor.
+        const tilts = document.querySelectorAll<HTMLElement>('.tilt');
+        tilts.forEach((card) => {
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width - 0.5;
+            const py = (e.clientY - r.top) / r.height - 0.5;
+            card.style.setProperty('--mx', `${(px * 9).toFixed(2)}deg`);
+            card.style.setProperty('--my', `${(-py * 9).toFixed(2)}deg`);
+          });
+          card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--mx', '0deg');
+            card.style.setProperty('--my', '0deg');
+          });
+        });
+
+        // 2. A terracotta glow trails the cursor inside dark sections.
+        document.querySelectorAll<HTMLElement>('.glow-host').forEach((host) => {
+          const glow = document.createElement('div');
+          glow.className = 'cursor-glow';
+          host.prepend(glow);
+          let raf = 0;
+          host.addEventListener('pointermove', (e) => {
+            const r = host.getBoundingClientRect();
+            const x = e.clientX - r.left;
+            const y = e.clientY - r.top;
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+              raf = 0;
+              glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            });
+          });
+          host.addEventListener('pointerenter', () => host.classList.add('glow-active'));
+          host.addEventListener('pointerleave', () => host.classList.remove('glow-active'));
+        });
+
+        // 3. The hero aperture leans toward the cursor across the whole page.
+        const heroLens = document.querySelector<HTMLElement>('[data-cursor-lean]');
+        if (heroLens) {
+          let raf = 0;
+          window.addEventListener(
+            'pointermove',
+            (e) => {
+              if (raf) return;
+              raf = requestAnimationFrame(() => {
+                raf = 0;
+                const dx = (e.clientX / window.innerWidth - 0.5) * 34;
+                const dy = (e.clientY / window.innerHeight - 0.5) * 34;
+                heroLens.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0)`;
+              });
+            },
+            { passive: true }
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
