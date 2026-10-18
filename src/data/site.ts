@@ -2,7 +2,7 @@
 export const site = {
   name: 'Ridenour Media Firm',
   location: 'Tulsa, OK',
-  email: 'junuhridenour0@gmail.com', // TODO confirm exact spelling before launch
+  email: 'junuh@ridenourmediafirm.com',
   youtube: { handle: '@JunuhRidenour', url: 'https://www.youtube.com/@JunuhRidenour' },
   instagram: {
     handle: '@ridenour_media_firm',

@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: POST /api/inquiry
 // Emails new leads via Resend. Env vars (set in the Cloudflare Pages dashboard):
 //   RESEND_API_KEY - from resend.com (free tier)
-//   LEAD_TO_EMAIL  - where leads go; defaults to junuhridenour0@gmail.com
+//   LEAD_TO_EMAIL  - where leads go; defaults to junuh@ridenourmediafirm.com
 //   LEAD_FROM      - sender; use onboarding@resend.dev until the domain is
 //                    verified in Resend, then e.g. leads@ridenourmediafirm.com
 
@@ -104,7 +104,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     },
     body: JSON.stringify({
       from: env.LEAD_FROM ?? 'RMF Website <onboarding@resend.dev>',
-      to: [env.LEAD_TO_EMAIL ?? 'junuhridenour0@gmail.com'],
+      to: [env.LEAD_TO_EMAIL ?? 'junuh@ridenourmediafirm.com'],
       subject: `New inquiry: ${name}${needs ? ` (${needs})` : ''}`,
       text: lines.join('\n'),
     }),
