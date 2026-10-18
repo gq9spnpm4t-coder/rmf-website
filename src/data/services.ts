@@ -75,7 +75,7 @@ export const services = [
   {
     name: 'Google Business photos',
     icon: 'mappin',
-    short: 'Google Biz',
+    short: 'Google profile',
     blurb: 'Fresh, well-lit photos for your Google listing that help you show up and earn the click.',
     need: 'Google Business photos',
   },
