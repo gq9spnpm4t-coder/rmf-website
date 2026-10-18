@@ -53,6 +53,16 @@ export const services = [
     need: 'Website photo & video',
   },
   {
+    name: 'Website design & build',
+    blurb: 'A clean, fast, custom site built around your brand and handled from the first idea to launch.',
+    need: 'Website design',
+  },
+  {
+    name: 'Google Business photos',
+    blurb: 'Fresh, well-lit photos for your Google listing that help you show up and earn the click.',
+    need: 'Google Business photos',
+  },
+  {
     name: 'Video editing',
     blurb: "Have the footage but not the time? I'll turn it into something finished.",
     need: 'Video editing',
@@ -71,6 +81,8 @@ export const inquiryNeeds = [
   'Senior photos',
   'Headshots',
   'Website photo & video',
+  'Website design',
+  'Google Business photos',
   'Video editing',
   'Other',
 ];
