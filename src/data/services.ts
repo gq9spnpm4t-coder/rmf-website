@@ -13,14 +13,9 @@ export const services = [
     need: 'Promo video',
   },
   {
-    name: 'Product photography',
-    blurb: 'Clean, intentional shots that make your product look its best.',
-    need: 'Product photography',
-  },
-  {
-    name: 'Product documentation',
-    blurb: 'Clear, consistent visuals that show exactly what something is and how it works.',
-    need: 'Product documentation',
+    name: 'Product photography & documentation',
+    blurb: 'Clean, intentional product shots, from hero images to clear step-by-step documentation.',
+    need: 'Product photography & documentation',
   },
   {
     name: 'Real estate photo & video',
@@ -73,8 +68,7 @@ export const services = [
 export const inquiryNeeds = [
   'Promo video',
   'Sports',
-  'Product photography',
-  'Product documentation',
+  'Product photography & documentation',
   'Real estate',
   'Event coverage',
   'Highlight reel',
